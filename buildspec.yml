@@ -15,13 +15,13 @@ phases:
       - echo "Building static HTML site"
       - mkdir -p output
       # Copy all files to output directory
-      - find . -mindepth 1 -maxdepth 1 ! -name output ! -name buildspec.yml -exec cp -r {} output/ \;
+      - cp -r * output/ || true
+      # Remove buildspec from artifacts
+      - rm -f output/buildspec.yml
 
   post_build:
     commands:
       - echo "Build complete - $(ls -la output/)"
-      - echo "Uploading files to S3 bucket..."
-      - aws s3 sync output/ s3://github-workshop-project-203414/
       - echo "Invalidating CloudFront cache..."
       - aws cloudfront create-invalidation --distribution-id E1R6OACY09KBS5 --paths "/*"
 
